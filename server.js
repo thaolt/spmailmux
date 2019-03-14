@@ -31,7 +31,9 @@ app.get('/test', (req, res) => {
   const puppeteer = require('puppeteer');
 
   (async () => {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      executablePath: '/app/.apt/usr/bin/google-chrome'
+    });
     const page = await browser.newPage();
     await page.goto('https://example.com');
     await page.screenshot({path: 'public/example.png'});
