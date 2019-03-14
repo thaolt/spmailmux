@@ -17,6 +17,7 @@
 
 // const bodyParser = require('body-parser');
 const express = require('express');
+const puppeteer = require('puppeteer-core');
 
 const app = express();
 
@@ -28,19 +29,16 @@ app.use(function forceSSL(req, res, next) {
 });
 
 app.get('/test', (req, res) => {
-  const puppeteer = require('puppeteer-core');
+  const browser = await puppeteer.launch({
+    executablePath: '/app/.apt/usr/bin/google-chrome',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+  const page = await browser.newPage();
+  await page.goto('https://example.com');
+  await page.screenshot({path: 'public/example.png'});
 
-  (async () => {
-    const browser = await puppeteer.launch({
-      executablePath: '/app/.apt/usr/bin/google-chrome',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-    const page = await browser.newPage();
-    await page.goto('https://example.com');
-    await page.screenshot({path: 'public/example.png'});
-
-    await browser.close();
-  })();
+  await browser.close();
+  res.send('done');
 });
 
 app.use(express.static('public', {extensions: ['html', 'htm']}));
