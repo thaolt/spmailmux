@@ -28,7 +28,7 @@ app.use(function forceSSL(req, res, next) {
 });
 
 app.get('/test', (req, res) => {
-  const puppeteer = require('puppeteer');
+  const puppeteer = require('puppeteer-core');
 
   (async () => {
     const browser = await puppeteer.launch({
