@@ -22,6 +22,10 @@ const puppeteer = require('puppeteer-core');
 
 const app = express();
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 console.log("chrome", process.env.CHROME_EXE);
 
 app.use(function forceSSL(req, res, next) {
@@ -34,15 +38,32 @@ app.use(function forceSSL(req, res, next) {
 app.get('/test', async (req, res, next) => {
   try {
     const browser = await puppeteer.launch({
+      //headless: false,
       executablePath: process.env.CHROME_EXE,
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     const page = await browser.newPage();
-    await page.goto('https://example.com');
+    await page.goto(
+      'https://www.migadu.com/en/my_account.html',
+      {
+        waitUntil: 'networkidle0'
+      }
+    );
+    await page.type('#acc_email_input_el', process.env.MIGADU_USER);
+    await page.click('#acc_signin_option_el');
+    await page.type('#acc_signin_password_input_el', process.env.MIGADU_PASS);
+    await page.click('#button_signin');
+    await page.waitForNavigation({
+      waitUntil: 'networkidle0'
+    });
+    await page.goto('https://manage.migadu.com/#!/domains/rustspawn.com/mailboxes/admin',{ waitUntil: 'networkidle0' });
+    await page.evaluate('location.href');
+    await sleep(1000);
+    //await page.waitForNavigation({ waitUntil: 'networkidle0' });
     await page.screenshot({path: 'public/example.png'});
 
     await browser.close();
-    res.send('done');
+    res.redirect('example.png');
   } catch (error) {
     next(error);
   }
