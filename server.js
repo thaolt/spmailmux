@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 'use strict';
-
+const dotenv = require('dotenv');
+dotenv.config();
 // const bodyParser = require('body-parser');
 const express = require('express');
 const puppeteer = require('puppeteer-core');
 
 const app = express();
+
+console.log("chrome", process.env.CHROME_EXE);
 
 app.use(function forceSSL(req, res, next) {
   if (req.hostname !== 'localhost' && req.get('X-Forwarded-Proto') === 'http') {
@@ -28,17 +31,21 @@ app.use(function forceSSL(req, res, next) {
   next();
 });
 
-app.get('/test', (req, res) => {
-  const browser = await puppeteer.launch({
-    executablePath: '/app/.apt/usr/bin/google-chrome',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-  const page = await browser.newPage();
-  await page.goto('https://example.com');
-  await page.screenshot({path: 'public/example.png'});
+app.get('/test', async (req, res, next) => {
+  try {
+    const browser = await puppeteer.launch({
+      executablePath: process.env.CHROME_EXE,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    const page = await browser.newPage();
+    await page.goto('https://example.com');
+    await page.screenshot({path: 'public/example.png'});
 
-  await browser.close();
-  res.send('done');
+    await browser.close();
+    res.send('done');
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use(express.static('public', {extensions: ['html', 'htm']}));
