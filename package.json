@@ -2,8 +2,13 @@
   "name": "spmailmux",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
+  "engine": {
+    "node": "10.15.3",
+    "npm": "6.8.0"
+  },
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -13,6 +18,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.16.4",
+    "imgur": "^0.3.1",
     "puppeteer-core": "^1.13.0"
   }
 }
