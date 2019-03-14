@@ -32,7 +32,8 @@ app.get('/test', (req, res) => {
 
   (async () => {
     const browser = await puppeteer.launch({
-      executablePath: '/app/.apt/usr/bin/google-chrome'
+      executablePath: '/app/.apt/usr/bin/google-chrome',
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     const page = await browser.newPage();
     await page.goto('https://example.com');
