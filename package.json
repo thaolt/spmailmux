@@ -11,5 +11,8 @@
     "url": "https://git.heroku.com/spmailmux.git"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer-core": "^1.13.0"
+  }
 }
